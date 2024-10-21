@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"biomejs.biome",
+		"mgmcdermott.vscode-language-babel",
+		"clinyong.vscode-css-modules",
+		"leizongmin.node-module-intellisense",
+		"christian-kohler.path-intellisense",
+		"yoavbls.pretty-ts-errors"
+	]
+}

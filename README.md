@@ -4,10 +4,10 @@
 
 ### Участники
 
-[Ксения](https://github.com/TODO),
+[Ксения](https://github.com/ksy336),
 [Александра](https://github.com/TODO),
 [Максим](https://github.com/TODO) и
-[Анна](https://github.com/TODO)
+[Анна](https://github.com/AnnaApk)
 
 ### Капитан
 

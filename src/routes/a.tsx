@@ -1,4 +1,4 @@
-import { defineLoader } from "@loader";
+import { defineLoader } from "@lib/router/loader";
 
 const { loader, useLoaderData } = defineLoader(async () => {
 	return { a: "A" };

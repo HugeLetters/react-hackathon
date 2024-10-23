@@ -1,4 +1,4 @@
-import { defineLoader } from "@loader";
+import { defineLoader } from "@lib/router/loader";
 import { Link, Outlet } from "react-router-dom";
 import style from "./layout.module.css";
 

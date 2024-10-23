@@ -1,4 +1,4 @@
-import { defineLoader } from "@loader";
+import { defineLoader } from "@lib/router/loader";
 import { redirect } from "react-router-dom";
 
 const { loader, useLoaderData } = defineLoader(async ({ params }) => {

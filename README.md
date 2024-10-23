@@ -6,7 +6,7 @@
 
 [Ксения](https://github.com/ksy336),
 [Александра](https://github.com/alexandraberd),
-[Максим](https://github.com/TODO) и
+[Максим](https://github.com/Kvaserq) и
 [Анна](https://github.com/AnnaApk)
 
 ### Капитан

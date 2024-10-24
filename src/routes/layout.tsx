@@ -5,7 +5,7 @@ import { Outlet, Link as RRLink } from "react-router-dom";
 import style from "./layout.module.css";
 
 const { loader, useLoaderData } = defineLoader(async () => {
-	return { data: "layout data" };
+	return await Promise.resolve({ data: "layout data" });
 });
 
 export { loader };

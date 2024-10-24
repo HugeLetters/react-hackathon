@@ -9,12 +9,12 @@ import "react-toastify/dist/ReactToastify.css";
 import "@assets/index.css";
 
 import { CssBaseline, StyledEngineProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { router } from "./router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = document.getElementById("root");
 

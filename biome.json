@@ -21,7 +21,20 @@
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"useHookAtTopLevel": "error"
+				"useHookAtTopLevel": "error",
+				"useArrayLiterals": "error"
+			},
+			"style": {
+				"noYodaExpression": "info",
+				"useBlockStatements": "warn",
+				"useThrowNewError": "error",
+				"useThrowOnlyError": "error"
+			},
+			"suspicious": {
+				"noEmptyBlockStatements": "info",
+				"noEvolvingTypes": "warn",
+				"useAwait": "info",
+				"useErrorMessage": "warn"
 			}
 		}
 	},
@@ -34,5 +47,17 @@
 		"parser": {
 			"allowComments": true
 		}
-	}
+	},
+	"overrides": [
+		{
+			"include": ["./src/*"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "error"
+					}
+				}
+			}
+		}
+	]
 }

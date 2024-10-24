@@ -12,7 +12,7 @@ const { loader, useLoaderData } = defineLoader(async ({ params }) => {
 		throw redirect("/");
 	}
 
-	return { data: numeric ** 2 };
+	return await Promise.resolve({ data: numeric ** 2 });
 });
 
 export { loader };

@@ -1,19 +1,19 @@
 import { defineAction } from "@lib/router/action";
 import { defineLoader } from "@lib/router/loader";
 import { Button, Container } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { Form } from "react-router-dom";
 import { toast } from "react-toastify";
 import style from "./b.module.css";
-import { useQuery } from "@tanstack/react-query";
 
 const { loader, useLoaderData } = defineLoader(async () => {
-	return { b: Math.random() };
+	return await Promise.resolve({ b: Math.random() });
 });
 
 const { action, useActionData } = defineAction(async () => {
 	const message = `hi from action - ${Date.now()}`;
 	notify(message);
-	return message;
+	return await Promise.resolve(message);
 });
 
 export function Component() {

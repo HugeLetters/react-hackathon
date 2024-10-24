@@ -1,7 +1,7 @@
 import { defineLoader } from "@lib/router/loader";
 
 const { loader, useLoaderData } = defineLoader(async () => {
-	return { a: "A" };
+	return await Promise.resolve({ a: "A" });
 });
 
 export { loader };

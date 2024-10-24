@@ -1,5 +1,7 @@
 import { defineLoader } from "@lib/router/loader";
-import { Link, Outlet } from "react-router-dom";
+import { Link as MUILink } from "@mui/material";
+import type { ComponentPropsWithRef } from "react";
+import { Outlet, Link as RRLink } from "react-router-dom";
 import style from "./layout.module.css";
 
 const { loader, useLoaderData } = defineLoader(async () => {
@@ -22,4 +24,8 @@ export function Component() {
 			<Outlet />
 		</div>
 	);
+}
+
+function Link(props: ComponentPropsWithRef<typeof RRLink>) {
+	return <MUILink component={RRLink} underline="hover" {...props} />;
 }

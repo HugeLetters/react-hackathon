@@ -4,6 +4,7 @@ import { Button, Container } from "@mui/material";
 import { Form } from "react-router-dom";
 import { toast } from "react-toastify";
 import style from "./b.module.css";
+import { useQuery } from "@tanstack/react-query";
 
 const { loader, useLoaderData } = defineLoader(async () => {
 	return { b: Math.random() };
@@ -24,6 +25,7 @@ export function Component() {
 			<h1>Page B</h1>
 			<p>{data.b}</p>
 			<p>action data - {actionData}</p>
+			<QueryComponent value={data.b} />
 			<Button
 				type="submit"
 				variant="contained"
@@ -54,4 +56,37 @@ function notify(message: string) {
 			</Button>
 		</div>,
 	);
+}
+
+type QueryComponentProps = { value: number };
+function QueryComponent({ value }: QueryComponentProps) {
+	const query = useQuery({
+		queryKey: ["value", value],
+		queryFn() {
+			if (Math.random() > 0.5) {
+				console.log("err");
+				throw new Error("i failed");
+			}
+
+			return new Promise<number>((r) => {
+				setTimeout(() => {
+					r(value * 2);
+				}, 1000);
+			});
+		},
+		select(data) {
+			return data + 1;
+		},
+		retry: 0,
+	});
+
+	if (query.isError) {
+		return <p>query error - {query.error.message}</p>;
+	}
+
+	if (query.isLoading) {
+		return <p>query loading</p>;
+	}
+
+	return <p>query data doubled - {query.data}</p>;
 }

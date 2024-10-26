@@ -18,6 +18,10 @@ export function createRouter(ctx: RouterContext) {
 			Component: RootLayout.Component,
 			children: [
 				{
+					index: true,
+					element: <Navigate to="/request/search/list" />,
+				},
+				{
 					path: "auth",
 					children: [
 						{

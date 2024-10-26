@@ -18,7 +18,7 @@ const toolbarStyle = {
 export function Footer() {
 	return (
 		<footer>
-			<Paper style={footerStyle} sx={{ position: "fixed" }} variant="outlined">
+			<Paper style={footerStyle} sx={{ position: "sticky" }} variant="outlined">
 				<Toolbar style={toolbarStyle}>
 					<Typography component="p">Об ивенте</Typography>
 					<Typography component="p">Github проекта</Typography>

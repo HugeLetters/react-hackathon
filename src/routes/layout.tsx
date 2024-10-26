@@ -1,15 +1,16 @@
+import { Container, Stack } from "@mui/material";
 import { Footer } from "@pages/Footer";
 import { Header } from "@pages/Header";
 import { Outlet } from "react-router-dom";
 
 export function Component() {
 	return (
-		<div>
+		<Stack height="100dvh">
 			<Header />
-			<main>
+			<Container component="main" sx={{ height: "100%" }}>
 				<Outlet />
-			</main>
+			</Container>
 			<Footer />
-		</div>
+		</Stack>
 	);
 }

@@ -7,7 +7,7 @@ export function HeaderBtn() {
 	const location = useLocation();
 	const isAuthPage = location.pathname === "/auth/signin";
 
-	if (location.pathname === "/auth/signin") {
+	if (isAuthPage) {
 		return (
 			<Button
 				variant="outlined"
@@ -19,15 +19,8 @@ export function HeaderBtn() {
 	}
 
 	return (
-		<Button
-			variant={isAuthPage ? "outlined" : "contained"}
-			endIcon={isAuthPage ? <ArrowForwardIosIcon fontSize="small" /> : null}
-		>
-			{isAuthPage ? (
-				"Войти"
-			) : (
-				<Box component="img" src={profileLogo} alt="Иконка" />
-			)}
+		<Button variant={"contained"}>
+			<Box component="img" src={profileLogo} alt="Иконка" />
 		</Button>
 	);
 }

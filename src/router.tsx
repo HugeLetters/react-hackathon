@@ -37,7 +37,29 @@ export const router = createBrowserRouter([
 							},
 							{
 								path: "favorites",
-								lazy: () => import("@routes/(authenticated)/profile/favorites"),
+								lazy: () =>
+									import("@routes/(authenticated)/profile/favorites/layout"),
+								children: [
+									{
+										index: true,
+										element: <Navigate to="/profile/favorites/list" />,
+									},
+									{
+										path: "list",
+										lazy: () =>
+											import("@routes/(authenticated)/profile/favorites/list"),
+									},
+									{
+										path: "grid",
+										lazy: () =>
+											import("@routes/(authenticated)/profile/favorites/grid"),
+									},
+									{
+										path: "map",
+										lazy: () =>
+											import("@routes/(authenticated)/profile/favorites/map"),
+									},
+								],
 							},
 						],
 					},

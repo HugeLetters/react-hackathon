@@ -1,3 +1,3 @@
 export function Component() {
-	return <div>favorites</div>;
+	return <div>map</div>;
 }

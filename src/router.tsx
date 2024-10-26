@@ -63,6 +63,45 @@ export const router = createBrowserRouter([
 							},
 						],
 					},
+					{
+						path: "request",
+						children: [
+							{
+								index: true,
+								element: <Navigate to="/request/search/list" />,
+							},
+							{
+								path: "search",
+								lazy: () =>
+									import("@routes/(authenticated)/request/search/layout"),
+								children: [
+									{
+										index: true,
+										element: <Navigate to="/request/search/list" />,
+									},
+									{
+										path: "list",
+										lazy: () =>
+											import("@routes/(authenticated)/request/search/list"),
+									},
+									{
+										path: "grid",
+										lazy: () =>
+											import("@routes/(authenticated)/request/search/grid"),
+									},
+									{
+										path: "map",
+										lazy: () =>
+											import("@routes/(authenticated)/request/search/map"),
+									},
+								],
+							},
+							{
+								path: "info/:id",
+								lazy: () => import("@routes/(authenticated)/request/info/:id"),
+							},
+						],
+					},
 				],
 			},
 			{

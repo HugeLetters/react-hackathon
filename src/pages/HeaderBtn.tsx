@@ -1,4 +1,3 @@
-// import authHeaderBtn from "@assets/icons/Vector-header-ayth.svg";
 import profileLogo from "@assets/icons/Icon-profile-header.svg";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Box, Button } from "@mui/material";
@@ -14,7 +13,6 @@ export function HeaderBtn() {
 				endIcon={<ArrowForwardIosIcon fontSize="small" />}
 			>
 				Войти
-				{/* <Box component="img" src={authHeaderBtn} alt="Стрелка" /> */}
 			</Button>
 		);
 	}

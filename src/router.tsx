@@ -111,9 +111,7 @@ export function createRouter(ctx: RouterContext) {
 										{
 											path: "grid",
 											lazy: () =>
-												import(
-													"@routes/(authenticated)/request/search/grid"
-												).then(augmentRouterDataLoader(ctx)),
+												import("@routes/(authenticated)/request/search/grid"),
 										},
 										{
 											path: "map",

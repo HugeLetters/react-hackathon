@@ -2,7 +2,7 @@ import { $api } from "@lib/api/client";
 import { ErrorScreen } from "@lib/components/Error";
 import { defineLoader } from "@lib/router/loader";
 import type { PropsWithChildren } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 
 export const { loader, useLoaderData } = defineLoader(
 	async ({ queryClient }) => {
@@ -14,9 +14,12 @@ export const { loader, useLoaderData } = defineLoader(
 );
 
 export function Component() {
+	const data = useLoaderData();
+	const context: RequestSearchContext = { data };
+
 	return (
 		<Layout>
-			<Outlet />
+			<Outlet context={context} />
 		</Layout>
 	);
 }
@@ -37,3 +40,11 @@ export function ErrorBoundary() {
 		</Layout>
 	);
 }
+
+export function useRequestSearchContext() {
+	return useOutletContext() as RequestSearchContext;
+}
+
+type RequestSearchContext = {
+	data: ReturnType<typeof useLoaderData>;
+};

@@ -11,7 +11,8 @@
 		"lint": "biome lint --write .",
 		"format": "biome format --write .",
 		"check": "biome check --write .",
-		"api:spec": "openapi-typescript ./backend/apispec2.yaml -o ./src/lib/api/spec.d.ts"
+		"api:spec": "openapi-typescript ./backend/apispec2.yaml -o ./src/lib/api/spec.d.ts",
+		"postinstall": "patch-package"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.13.3",
@@ -35,6 +36,7 @@
 		"@vitejs/plugin-react": "^4.3.2",
 		"globals": "^15.9.0",
 		"openapi-typescript": "^7.4.2",
+		"patch-package": "^8.0.0",
 		"typescript": "^5.5.3",
 		"vite": "^5.4.8",
 		"vite-tsconfig-paths": "^5.0.1"

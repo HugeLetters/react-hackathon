@@ -1,0 +1,26 @@
+diff --git a/node_modules/openapi-react-query/dist/index.cjs b/node_modules/openapi-react-query/dist/index.cjs
+index 77961b3..bcb754d 100644
+--- a/node_modules/openapi-react-query/dist/index.cjs
++++ b/node_modules/openapi-react-query/dist/index.cjs
+@@ -4386,7 +4386,7 @@ function createClient(client) {
+     const mth = method.toUpperCase();
+     const fn = client[mth];
+     const { data, error } = await fn(path, { signal, ...init });
+-    if (error || !data) {
++    if (error || data === undefined) {
+       throw error;
+     }
+     return data;
+diff --git a/node_modules/openapi-react-query/dist/index.js b/node_modules/openapi-react-query/dist/index.js
+index 15711af..b58d379 100644
+--- a/node_modules/openapi-react-query/dist/index.js
++++ b/node_modules/openapi-react-query/dist/index.js
+@@ -4,7 +4,7 @@ export default function createClient(client) {
+         const mth = method.toUpperCase();
+         const fn = client[mth];
+         const { data, error } = await fn(path, { signal, ...init });
+-        if (error || !data) {
++        if (error || data === undefined) {
+             throw error;
+         }
+         return data;

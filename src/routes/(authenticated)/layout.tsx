@@ -1,11 +1,17 @@
+import { $api } from "@lib/api/client";
 import { defineLoader } from "@lib/router/loader";
 import { redirect } from "react-router-dom";
 
-export const { loader } = defineLoader(() => {
-	const isSignedIn = true;
-	if (!isSignedIn) {
+export const { loader } = defineLoader(async ({ queryClient }) => {
+	const token = localStorage.getItem("auth-token");
+	if (!token) {
 		throw redirect("/auth/signin");
 	}
+
+	const userOpts = $api.queryOptions("get", "/api/user", {}, { retry: 3 });
+	await $api.prefetchQuery(queryClient, userOpts).catch(() => {
+		throw redirect("/auth/signin");
+	});
 
 	return null;
 });

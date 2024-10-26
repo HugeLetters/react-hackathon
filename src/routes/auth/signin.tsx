@@ -1,12 +1,12 @@
+import { SigninComponent } from "@pages/signin/SigninComponent";
 import { useSignIn } from "@pages/signin/api";
-import { SigninComponent } from "@pages/signin/someComponent";
 import { Form } from "react-router-dom";
 
 export function Component() {
 	const { mutate: signin } = useSignIn();
 
 	return (
-		<div>
+		<main>
 			<div>signin page</div>
 			<Form
 				method="post"
@@ -25,6 +25,6 @@ export function Component() {
 				<button type="submit">login</button>
 			</Form>
 			<SigninComponent />
-		</div>
+		</main>
 	);
 }

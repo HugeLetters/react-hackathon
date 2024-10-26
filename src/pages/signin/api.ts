@@ -1,7 +1,9 @@
 import { $api } from "@lib/api/client";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export function useSignIn() {
+	const navigate = useNavigate();
 	return $api.useMutation("post", "/api/auth", {
 		onSuccess(data) {
 			if (!data.token) {
@@ -9,7 +11,7 @@ export function useSignIn() {
 			}
 
 			localStorage.setItem("auth-token", data.token);
-			toast.success("Авторизация прошла успешно");
+			navigate("/request/search");
 		},
 		onError() {
 			toast.error("Ошибка! Попробуйте еще раз");

@@ -46,7 +46,7 @@ function App() {
 	return (
 		<StyledEngineProvider injectFirst>
 			<CssBaseline />
-			<ToastContainer stacked />
+			<ToastContainer stacked theme="colored" />
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
 			</QueryClientProvider>

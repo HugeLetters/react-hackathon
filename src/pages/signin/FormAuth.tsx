@@ -15,26 +15,29 @@ export function FormAuth() {
 				const email = data.get("email")?.toString();
 				const password = data.get("password")?.toString();
 
-        console.log('form',email, password )
 				signin({ body: { login: email, password } });
 			}}
-      style={{ display: 'flex', flexDirection: 'column', width:'485px'}}
+			style={{ display: "flex", flexDirection: "column", width: "485px" }}
 		>
-      <TextField 
-        name="email" 
-        required
-        id="outlined-required"
-        label="Логин"
-        placeholder="Введите e-mail"
-        sx={{marginBottom:'30px'}} />
-        <TextField 
-        name="password" 
-        required
-        id="outlined-required"
-        label="Пароль"
-        placeholder="Введите пароль"
-        sx={{marginBottom:'40px'}} />
-			<Button variant="contained" size="large" type="submit">Войти</Button>
+			<TextField
+				name="email"
+				required
+				id="outlined-required"
+				label="Логин"
+				placeholder="Введите e-mail"
+				sx={{ marginBottom: "30px" }}
+			/>
+			<TextField
+				name="password"
+				required
+				id="outlined-required"
+				label="Пароль"
+				placeholder="Введите пароль"
+				sx={{ marginBottom: "40px" }}
+			/>
+			<Button variant="contained" size="large" type="submit">
+				Войти
+			</Button>
 		</Form>
 	);
 }

@@ -1,3 +1,3 @@
 export function Component() {
-	return <div>profile</div>;
+	return <div>contacts</div>;
 }

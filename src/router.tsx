@@ -4,7 +4,6 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 export const router = createBrowserRouter([
 	{
 		path: "/",
-		loader: RootLayout.loader,
 		Component: RootLayout.Component,
 		children: [
 			{

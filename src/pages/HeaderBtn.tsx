@@ -19,7 +19,12 @@ export function HeaderBtn() {
 	}
 
 	return (
-		<Button variant={"contained"}>
+		<Button
+			variant="contained"
+			color="primary"
+			sx={{ background: "none" }}
+			disableElevation
+		>
 			<Box component="img" src={profileLogo} alt="Иконка" />
 		</Button>
 	);

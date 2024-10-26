@@ -8,7 +8,7 @@ export function Header() {
 		<header>
 			<AppBar position="sticky" color="inherit">
 				<Toolbar className={style.toolbar}>
-					<Box component="img" src={logo} alt="Логотип" />
+					<Box component="img" src={logo} alt="" />
 					<Typography component="p">Запросы о помощи</Typography>
 					<HeaderBtn />
 				</Toolbar>

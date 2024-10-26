@@ -14,7 +14,7 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { router } from "./router";
+import { createRouter } from "./router";
 
 const root = document.getElementById("root");
 
@@ -29,7 +29,19 @@ createRoot(root).render(
 );
 
 function App() {
-	const [queryClient] = useState(() => new QueryClient());
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 20_000,
+						retry: 0,
+					},
+				},
+			}),
+	);
+
+	const [router] = useState(() => createRouter({ queryClient }));
 
 	return (
 		<StyledEngineProvider injectFirst>

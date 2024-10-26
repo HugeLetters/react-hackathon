@@ -5,7 +5,8 @@ export function Component() {
 	return (
 		<Stack
 			sx={{
-				width: "1500px",
+				maxWidth: "1500px",
+				width: "100%",
 				margin: "0 auto",
 				flexDirection: "row",
 				height: "100%",
@@ -13,7 +14,12 @@ export function Component() {
 		>
 			<Paper
 				component="section"
-				sx={{ width: "50%", height: "100%", padding: "64px 0 0 40px" }}
+				sx={{
+					width: "50%",
+					height: "100%",
+					padding: "64px 40px 0 40px",
+					borderRadius: "0",
+				}}
 				variant="outlined"
 			>
 				<Typography variant="h4" sx={{ marginBottom: "90px" }}>
@@ -27,7 +33,12 @@ export function Component() {
 
 			<Paper
 				component="section"
-				sx={{ width: "50%", height: "100%", padding: "64px 0 0 40px" }}
+				sx={{
+					width: "50%",
+					height: "100%",
+					padding: "64px 0 0 40px",
+					borderRadius: "0",
+				}}
 				variant="outlined"
 			>
 				<Typography variant="h4" sx={{ marginBottom: "90px" }}>

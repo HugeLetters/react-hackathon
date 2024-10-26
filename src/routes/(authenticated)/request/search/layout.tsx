@@ -15,22 +15,25 @@ export const { loader, useLoaderData } = defineLoader(
 
 export function Component() {
 	return (
-		<div>
-			<div>request search</div>
+		<Layout>
 			<Outlet />
-		</div>
+		</Layout>
 	);
 }
 
 function Layout({ children }: PropsWithChildren) {
 	return (
 		<div>
-			filters
+			<div>request search filter</div>
 			<div>{children}</div>
 		</div>
 	);
 }
 
 export function ErrorBoundary() {
-	return <ErrorScreen />;
+	return (
+		<Layout>
+			<ErrorScreen />
+		</Layout>
+	);
 }

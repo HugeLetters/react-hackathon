@@ -25,9 +25,12 @@ const baseApi = createClient(fetchClient);
 export const $api = {
 	...baseApi,
 	async prefetchQuery<T>(client: QueryClient, opts: Opts<T>): Promise<T> {
-		return (
-			client.getQueryData(opts.queryKey) ?? (await client.fetchQuery(opts))
-		);
+		const cache: T | undefined = client.getQueryData(opts.queryKey);
+		if (cache !== undefined) {
+			return cache;
+		}
+
+		return await client.fetchQuery(opts);
 	},
 	client: fetchClient,
 };

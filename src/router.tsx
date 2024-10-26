@@ -39,7 +39,10 @@ export function createRouter(ctx: RouterContext) {
 								},
 								{
 									path: "data",
-									lazy: () => import("@routes/(authenticated)/profile/data"),
+									lazy: () =>
+										import("@routes/(authenticated)/profile/data").then(
+											augmentRouterDataLoader(ctx),
+										),
 								},
 								{
 									path: "contacts",

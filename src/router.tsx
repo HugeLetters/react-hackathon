@@ -1,5 +1,5 @@
 import * as RootLayout from "@routes/layout";
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter([
 	{
@@ -7,20 +7,13 @@ export const router = createBrowserRouter([
 		Component: RootLayout.Component,
 		children: [
 			{
-				index: true,
-				element: <Navigate to="/a" />,
-			},
-			{
-				path: "/a",
-				lazy: () => import("@routes/a"),
-			},
-			{
-				path: "/b",
-				lazy: () => import("@routes/b"),
-			},
-			{
-				path: "/:param",
-				lazy: () => import("@routes/:param"),
+				path: "auth",
+				children: [
+					{
+						path: "signin",
+						lazy: () => import("@routes/auth/signin"),
+					},
+				],
 			},
 		],
 	},

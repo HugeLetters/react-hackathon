@@ -1,3 +1,10 @@
+import { SigninComponent } from "@pages/signin/someComponent";
+
 export function Component() {
-	return <div>signin page</div>;
+	return (
+		<div>
+			<div>signin page</div>
+			<SigninComponent />
+		</div>
+	);
 }

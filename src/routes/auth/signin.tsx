@@ -6,7 +6,7 @@ export function Component() {
 	const { mutate: signin } = useSignIn();
 
 	return (
-		<main>
+		<div>
 			<div>signin page</div>
 			<Form
 				method="post"
@@ -25,6 +25,6 @@ export function Component() {
 				<button type="submit">login</button>
 			</Form>
 			<SigninComponent />
-		</main>
+		</div>
 	);
 }

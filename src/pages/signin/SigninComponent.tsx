@@ -1,5 +1,3 @@
 export function SigninComponent() {
-  return (
-    <div>Main Page dthwbnwpfjbn</div>
-  )
+	return <div>Main Page dthwbnwpfjbn</div>;
 }

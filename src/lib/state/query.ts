@@ -1,13 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 
 type QueryStateOptions<T> = {
-	/**
-	 * Трансформация значения из и к строке-параметру
-	 */
 	transform: {
-		/** Трансформация из строки-параметра к значению */
 		from: (param: string) => T;
-		/** Трансформация к строкe-параметру из значения */
 		to: (value: T) => string;
 	};
 };

@@ -7,7 +7,6 @@ import {
 	defineQueryModel,
 	parseQueryModel,
 	useQueryModel,
-	useQueryState,
 } from "@lib/state/query";
 import { Search as SearchIcon } from "@mui/icons-material";
 import {
@@ -17,6 +16,7 @@ import {
 	Box,
 	Button,
 	Checkbox,
+	type CheckboxProps,
 	FormControlLabel,
 	FormGroup,
 	FormLabel,
@@ -24,7 +24,6 @@ import {
 	Paper,
 	TextField,
 	Typography,
-	type CheckboxProps,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import type { QueryClient } from "@tanstack/react-query";
@@ -32,15 +31,25 @@ import dayjs, { type Dayjs } from "dayjs";
 import type { PropsWithChildren } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 
+// todo - cache filter
+
+let prevFilteredRequests: Array<Request> | null = null;
 export const { loader, useLoaderData } = defineLoader(
 	async ({ request, queryClient }) => {
-		const requests = await prefetchRequests(queryClient);
+		let requests = await prefetchRequests(queryClient);
 		const { searchParams } = new URL(request.url);
 		const filter = parseQueryModel(searchParams, FilterModel);
-		const filteredRequests = filterRequests(requests, {
-			...filter,
-			search: searchParams.get("q"),
-		});
+		const search = parseQueryModel(searchParams, SearchModel);
+
+		if (prevFilteredRequests) {
+			const reuse = parseQueryModel(searchParams, ReuseRequestModel);
+			if (reuse["~reuseRequest"]) {
+				requests = prevFilteredRequests;
+			}
+		}
+
+		const filteredRequests = filterRequests(requests, { ...filter, ...search });
+		prevFilteredRequests = filteredRequests;
 
 		return {
 			requests: filteredRequests,
@@ -52,10 +61,9 @@ export function Component() {
 	const data = useLoaderData();
 	const context: RequestSearchContext = { data };
 
-	console.log(data.requests);
-
 	return (
 		<Layout>
+			<div>{data.requests.length}</div>
 			<Outlet context={context} />
 		</Layout>
 	);
@@ -79,14 +87,11 @@ function Layout({ children }: PropsWithChildren) {
 }
 
 function Search() {
-	const [search, setSearch] = useQueryState("q", {
-		transform: {
-			from: String,
-			to(str) {
-				return str.toLowerCase();
-			},
-		},
+	const [search, setSearch] = useQueryModel({
+		...SearchModel,
+		...ReuseRequestModel,
 	});
+
 	return (
 		<Paper
 			sx={{
@@ -104,8 +109,17 @@ function Search() {
 				slotProps={{
 					input: { startAdornment: <SearchIcon /> },
 				}}
-				value={search}
-				onChange={(e) => setSearch(e.currentTarget.value)}
+				value={search.q}
+				onChange={(e) => {
+					const { value } = e.currentTarget;
+					const lowercase = value.toLowerCase();
+					setSearch((prev) => {
+						return {
+							q: lowercase,
+							"~reuseRequest": lowercase.includes(prev.q),
+						};
+					});
+				}}
 			/>
 		</Paper>
 	);
@@ -235,6 +249,29 @@ type RequestSearchContext = {
 	data: ReturnType<typeof useLoaderData>;
 };
 
+const ReuseRequestModel = {
+	"~reuseRequest": defineQueryModel<boolean>({
+		transform: {
+			from(param) {
+				switch (param) {
+					case "true":
+						return true;
+					default:
+						return false;
+				}
+			},
+			to(value) {
+				switch (value) {
+					case true:
+						return "true";
+					default:
+						return "";
+				}
+			},
+		},
+	}),
+} satisfies QueryModel;
+
 const FilterModel = {
 	requester: defineQueryModel<Nullish<Request["requesterType"]>>({
 		transform: {
@@ -352,6 +389,21 @@ const FilterModel = {
 	}),
 } satisfies QueryModel;
 
+const SearchModel = {
+	q: defineQueryModel({
+		transform: {
+			from: String,
+			to(s) {
+				return s.toLowerCase();
+			},
+		},
+	}),
+} satisfies QueryModel;
+
+type FilterModelValue = QueryModelValue<typeof FilterModel>;
+type SearchModelValue = QueryModelValue<typeof SearchModel>;
+interface FullFilter extends FilterModelValue, SearchModelValue {}
+
 type Request = Awaited<ReturnType<typeof prefetchRequests>>[number];
 type RequestRequirements = NonNullable<Request["helperRequirements"]>;
 type Nullish<T> = Exclude<T, undefined> | null;
@@ -366,13 +418,11 @@ function prefetchRequests(client: QueryClient) {
 	return $api.prefetchQuery(client, requestsOpts);
 }
 
-interface Filter extends QueryModelValue<typeof FilterModel> {
-	search: Nullish<string>;
-}
-
+// todo - use async API to unblock UI
+// todo - abortable?
 function filterRequests(
 	requests: Array<Request>,
-	filter: Filter,
+	filter: FullFilter,
 ): Array<Request> {
 	if (isFilterEmpty(filter)) {
 		return requests;
@@ -397,10 +447,10 @@ function filterRequests(
 			return false;
 		}
 
-		if (filter.search !== null) {
+		if (filter.q !== null) {
 			if (
-				!request.title?.toLowerCase().includes(filter.search) ||
-				!request.organization?.title?.toLowerCase().includes(filter.search)
+				!request.title?.toLowerCase().includes(filter.q) ||
+				!request.organization?.title?.toLowerCase().includes(filter.q)
 			) {
 				return false;
 			}
@@ -414,18 +464,62 @@ function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {
 	return filter === null || filter === value;
 }
 
-function isFilterEmpty(filter: QueryModelValue<typeof FilterModel> | Filter) {
-	return Object.values(filter).every((value) => value === null);
+function isFilterEmpty(filter: Partial<FullFilter>) {
+	return (
+		filter.help == null &&
+		filter.helper == null &&
+		filter.isOnline == null &&
+		(filter.q === "" || filter.q === undefined) &&
+		filter.qualification == null &&
+		filter.requester == null &&
+		filter.until == null
+	);
 }
 
 function useFilterModel() {
-	const [filter, setFilter] = useQueryModel(FilterModel);
+	const [filter, setFilter] = useQueryModel({
+		...FilterModel,
+		...ReuseRequestModel,
+	});
 
-	function setValue<K extends keyof typeof filter>(
+	function canReuseRequest<K extends keyof FilterModelValue>(
 		key: K,
-		value: (typeof filter)[K],
+		newValue: FilterModelValue[K],
+		prevValue: FilterModelValue[K],
+	): boolean {
+		if (newValue == null) {
+			return false;
+		}
+
+		if (prevValue == null && newValue !== null) {
+			return true;
+		}
+
+		switch (key) {
+			case "help":
+			case "helper":
+			case "isOnline":
+			case "qualification":
+			case "requester":
+				return newValue === prevValue;
+			case "until":
+				return newValue <= prevValue;
+			default:
+				return false;
+		}
+	}
+
+	function setValue<K extends keyof FilterModelValue>(
+		key: K,
+		value: FilterModelValue[K],
 	) {
-		setFilter((filter) => ({ ...filter, [key]: value }));
+		setFilter((filter) => {
+			return {
+				...filter,
+				[key]: value,
+				"~reuseRequest": canReuseRequest(key, value, filter[key]),
+			};
+		});
 	}
 
 	return {
@@ -438,12 +532,13 @@ function useFilterModel() {
 				isOnline: null,
 				qualification: null,
 				until: null,
+				"~reuseRequest": false,
 			});
 		},
 		setValue,
-		createCheckboxHandler<K extends keyof typeof filter>(
+		createCheckboxHandler<K extends keyof FilterModelValue>(
 			key: K,
-			value: (typeof filter)[K],
+			value: FilterModelValue[K],
 		): CheckboxProps {
 			return {
 				checked: filter[key] === value,

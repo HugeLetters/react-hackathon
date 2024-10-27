@@ -2,12 +2,7 @@ import { type HelpRequest, prefetchRequests } from "@lib/api/request";
 import { ErrorScreen } from "@lib/components/Error";
 import { NoResultsScreen } from "@lib/components/NoResults/no-results";
 import { defineLoader } from "@lib/router/loader";
-import {
-	type QueryModel,
-	defineQueryModel,
-	parseQueryModel,
-	useQueryModel,
-} from "@lib/state/query";
+import { parseQueryModel, useQueryModel } from "@lib/state/query";
 import { GridOnRounded, ListAltRounded, LocationOn } from "@mui/icons-material";
 import {
 	Box,
@@ -32,6 +27,7 @@ import {
 	FilterModel,
 	type FullFilter,
 	type Nullish,
+	PageModel,
 	ReuseRequestModel,
 	SearchModel,
 	isFilterEmpty,
@@ -237,21 +233,3 @@ async function filterRequests(
 function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {
 	return filter === null || filter === value;
 }
-
-const PageModel = {
-	page: defineQueryModel({
-		transform: {
-			from(param) {
-				const parsed = Number.parseInt(param);
-				if (Number.isNaN(parsed)) {
-					return 1;
-				}
-
-				return parsed;
-			},
-			to(value) {
-				return value.toString();
-			},
-		},
-	}),
-} satisfies QueryModel;

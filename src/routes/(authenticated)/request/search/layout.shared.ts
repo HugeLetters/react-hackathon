@@ -162,6 +162,24 @@ export const SearchModel = {
 	}),
 } satisfies QueryModel;
 
+export const PageModel = {
+	page: defineQueryModel({
+		transform: {
+			from(param) {
+				const parsed = Number.parseInt(param);
+				if (Number.isNaN(parsed)) {
+					return 1;
+				}
+
+				return parsed;
+			},
+			to(value) {
+				return value.toString();
+			},
+		},
+	}),
+} satisfies QueryModel;
+
 export type FilterModelValue = QueryModelValue<typeof FilterModel>;
 export type SearchModelValue = QueryModelValue<typeof SearchModel>;
 export interface FullFilter extends FilterModelValue, SearchModelValue {}

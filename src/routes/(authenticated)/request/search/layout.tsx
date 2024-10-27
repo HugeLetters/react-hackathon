@@ -21,6 +21,7 @@ import { Outlet } from "react-router-dom";
 import {
 	FilterModel,
 	type FilterModelValue,
+	PageModel,
 	ReuseRequestModel,
 	SearchModel,
 	isFilterEmpty,
@@ -49,6 +50,7 @@ function Search() {
 	const [search, setSearch] = useQueryModel({
 		...SearchModel,
 		...ReuseRequestModel,
+		...PageModel,
 	});
 
 	return (
@@ -75,6 +77,7 @@ function Search() {
 					setSearch((prev) => {
 						return {
 							q: lowercase,
+							page: 1,
 							"~reuseRequest": lowercase.includes(prev.q),
 						};
 					});
@@ -196,6 +199,7 @@ function useFilterModel() {
 	const [filter, setFilter] = useQueryModel({
 		...FilterModel,
 		...ReuseRequestModel,
+		...PageModel,
 	});
 
 	function canReuseRequest<K extends keyof FilterModelValue>(
@@ -233,6 +237,7 @@ function useFilterModel() {
 			return {
 				...filter,
 				[key]: value,
+				page: 1,
 				"~reuseRequest": canReuseRequest(key, value, filter[key]),
 			};
 		});
@@ -249,6 +254,7 @@ function useFilterModel() {
 				qualification: null,
 				until: null,
 				"~reuseRequest": false,
+				page: 1,
 			});
 		},
 		setValue,

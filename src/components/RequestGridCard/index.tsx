@@ -1,23 +1,21 @@
 import personFinanceLogo from "@assets/icons/Dementia.svg";
-import organizationLogo from "@assets/icons/NursingHome.svg";
 import personMaterialLogo from "@assets/icons/Dementia.svg";
+import organizationLogo from "@assets/icons/NursingHome.svg";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { FavStarBtn } from "./FavStarBtn";
 import LinearProgress from "@mui/material/LinearProgress";
+import { FavStarBtn } from "./FavStarBtn";
 
-import style from "./RequestGridCard.module.css";
 import dayjs from "dayjs";
 import { useContributeToRequest } from "./api";
+import style from "./RequestGridCard.module.css";
 
 export function RequestGridCard({ ...props }) {
 	const { data: req } = props;
-	const {
-		contributeToRequest
-	}= useContributeToRequest()
+	const { contributeToRequest } = useContributeToRequest();
 
 	const helpHandler = async (id: string) => {
-		const res = await contributeToRequest(id)
-		console.log('res', res)
+		const res = await contributeToRequest(id);
+		console.log("res", res);
 	};
 
 	return (
@@ -92,9 +90,7 @@ export function RequestGridCard({ ...props }) {
 					<Typography variant="body2">
 						Нас уже: {req?.contributorsCount.toLocaleString("ru-RU")}
 					</Typography>
-					<Button variant="contained" 
-					onClick={() => helpHandler(req?.id)}
-					>
+					<Button variant="contained" onClick={() => helpHandler(req?.id)}>
 						Помочь
 					</Button>
 				</Box>

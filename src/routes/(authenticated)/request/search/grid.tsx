@@ -1,5 +1,5 @@
 import { RequestGridCard } from "@components/RequestGridCard";
-import { useRequestSearchContext } from "./layout";
+import { useRequestSearchContext } from "./layout.loader";
 
 export function Component() {
 	const ctx = useRequestSearchContext();

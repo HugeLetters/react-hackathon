@@ -7,13 +7,17 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import style from "./RequestGridCard.module.css";
 import dayjs from "dayjs";
+import { useContributeToRequest } from "./api";
 
 export function RequestGridCard({ ...props }) {
 	const { data: req } = props;
-	console.log(req);
+	const {
+		contributeToRequest
+	}= useContributeToRequest()
 
-	const helpHandler = (id: number) => {
-		console.log("help action", id);
+	const helpHandler = async (id: string) => {
+		const res = await contributeToRequest(id)
+		console.log('res', res)
 	};
 
 	return (
@@ -88,7 +92,9 @@ export function RequestGridCard({ ...props }) {
 					<Typography variant="body2">
 						Нас уже: {req?.contributorsCount.toLocaleString("ru-RU")}
 					</Typography>
-					<Button variant="contained" onClick={() => helpHandler(req?.id)}>
+					<Button variant="contained" 
+					onClick={() => helpHandler(req?.id)}
+					>
 						Помочь
 					</Button>
 				</Box>

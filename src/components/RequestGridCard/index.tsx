@@ -5,23 +5,27 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { FavStarBtn } from "./FavStarBtn";
 
+import type { HelpRequest } from "@lib/api/request";
 import dayjs from "dayjs";
 import { useContributeToRequest } from "./api";
 import style from "./RequestGridCard.module.css";
 
-export function RequestGridCard({ ...props }) {
-	const { data: req } = props;
+type RequestGridCardProps = {
+	request: HelpRequest;
+};
+
+export function RequestGridCard({ request }: RequestGridCardProps) {
 	const { contributeToRequest } = useContributeToRequest();
 
 	return (
-		<Paper className={style.card} variant="outlined">
-			<Box display="flex" justifyContent="center">
+		<Paper className={style.card} sx={{ height: "100%" }} variant="outlined">
+			<Box display="flex" sx={{ height: "100%" }} justifyContent="center">
 				<Box
 					component="img"
 					src={
-						req?.requesterType === "organization"
+						request.requesterType === "organization"
 							? organizationLogo
-							: req?.helpType === "finance"
+							: request.helpType === "finance"
 								? personFinanceLogo
 								: personMaterialLogo
 					}
@@ -32,35 +36,35 @@ export function RequestGridCard({ ...props }) {
 			</Box>
 			<Box className={style.container}>
 				<Box className={style.header}>
-					<Box>{req?.title}</Box>
-					<FavStarBtn isFavorite={req?.requestGoal % 2 === 0} />
+					<Box>{request.title}</Box>
+					<FavStarBtn isFavorite={(request.requestGoal ?? 0) % 2 === 0} />
 				</Box>
 				<Box className={style.cardContent}>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Организация</Typography>
 						<Typography className={style.info}>
-							{req?.organization?.title}
+							{request.organization?.title}
 						</Typography>
 					</Box>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Локация</Typography>
 						<Typography className={style.info}>
-							Область: {req?.location.district}
+							Область: {request.location?.district}
 						</Typography>
 						<Typography className={style.info}>
-							Населеный пункт: {req?.location.city}
+							Населеный пункт: {request.location?.city}
 						</Typography>
 					</Box>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Цель сбора</Typography>
 						<Typography className={style.infoGoal}>
-							{req?.goalDescription}
+							{request.goalDescription}
 						</Typography>
 					</Box>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Завершение</Typography>
 						<Typography className={style.infoGoal}>
-							{dayjs(req?.endingDate).format("DD.MM.YYYY")}
+							{dayjs(request.endingDate).format("DD.MM.YYYY")}
 						</Typography>
 					</Box>
 					<Box className={style.cardInfo}>
@@ -68,25 +72,28 @@ export function RequestGridCard({ ...props }) {
 						<LinearProgress
 							className={style.progress}
 							variant="determinate"
-							value={(req?.requestGoalCurrentValue / req?.requestGoal) * 100}
+							value={
+								(request.requestGoalCurrentValue ??
+									0 / (request.requestGoal ?? 1)) * 100
+							}
 						/>
 						<Box className={style.values}>
 							<Typography variant="body2">
-								{req?.requestGoalCurrentValue.toLocaleString("ru-RU")} руб
+								{request.requestGoalCurrentValue?.toLocaleString("ru-RU")} руб
 							</Typography>
 							<Typography variant="body2">
-								{req?.requestGoal.toLocaleString("ru-RU")} руб
+								{request.requestGoal?.toLocaleString("ru-RU")} руб
 							</Typography>
 						</Box>
 					</Box>
 				</Box>
 				<Box className={style.action}>
 					<Typography variant="body2">
-						Нас уже: {req?.contributorsCount.toLocaleString("ru-RU")}
+						Нас уже: {request.contributorsCount?.toLocaleString("ru-RU")}
 					</Typography>
 					<Button
 						variant="contained"
-						onClick={() => contributeToRequest(req?.id)}
+						onClick={() => contributeToRequest(request?.id ?? "")}
 					>
 						Помочь
 					</Button>

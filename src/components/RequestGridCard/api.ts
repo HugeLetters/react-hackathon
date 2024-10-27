@@ -10,7 +10,7 @@ export function useContributeToRequest() {
 				if (!data) {
 					throw new Error("Donate fail");
 				}
-				toast.success("Успешно! Спасибо за помощь!");
+				toast.success("Спасибо! Вклад успешно внесен");
 			},
 			onError() {
 				toast.error("Ошибка! Попробуйте еще раз");

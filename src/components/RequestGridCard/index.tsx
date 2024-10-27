@@ -13,11 +13,6 @@ export function RequestGridCard({ ...props }) {
 	const { data: req } = props;
 	const { contributeToRequest } = useContributeToRequest();
 
-	const helpHandler = async (id: string) => {
-		const res = await contributeToRequest(id);
-		console.log("res", res);
-	};
-
 	return (
 		<Paper className={style.card} variant="outlined">
 			<Box display="flex" justifyContent="center">
@@ -40,7 +35,6 @@ export function RequestGridCard({ ...props }) {
 					<Box>{req?.title}</Box>
 					<FavStarBtn isFavorite={req?.requestGoal % 2 === 0} />
 				</Box>
-
 				<Box className={style.cardContent}>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Организация</Typography>
@@ -90,7 +84,7 @@ export function RequestGridCard({ ...props }) {
 					<Typography variant="body2">
 						Нас уже: {req?.contributorsCount.toLocaleString("ru-RU")}
 					</Typography>
-					<Button variant="contained" onClick={() => helpHandler(req?.id)}>
+					<Button variant="contained" onClick={() => contributeToRequest(req?.id)}>
 						Помочь
 					</Button>
 				</Box>

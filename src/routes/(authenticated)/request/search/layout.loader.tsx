@@ -4,7 +4,6 @@ import { parseQueryModel } from "@lib/state/query";
 import { GridOnRounded, ListAltRounded, LocationOn } from "@mui/icons-material";
 import {
 	Box,
-	Container,
 	Paper,
 	ToggleButton,
 	ToggleButtonGroup,

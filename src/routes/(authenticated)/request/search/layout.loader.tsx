@@ -1,9 +1,18 @@
+import { type HelpRequest, prefetchRequests } from "@lib/api/request";
 import { ErrorScreen } from "@lib/components/Error";
+import { NoResultsScreen } from "@lib/components/NoResults/no-results";
 import { defineLoader } from "@lib/router/loader";
-import { parseQueryModel } from "@lib/state/query";
+import {
+	type QueryModel,
+	defineQueryModel,
+	parseQueryModel,
+	useQueryModel,
+} from "@lib/state/query";
 import { GridOnRounded, ListAltRounded, LocationOn } from "@mui/icons-material";
 import {
 	Box,
+	Button,
+	Pagination,
 	Paper,
 	ToggleButton,
 	ToggleButtonGroup,
@@ -17,26 +26,31 @@ import {
 	Outlet,
 	useLocation,
 	useOutletContext,
+	useRevalidator,
 } from "react-router-dom";
 import {
 	FilterModel,
 	type FullFilter,
 	type Nullish,
-	type Request,
 	ReuseRequestModel,
 	SearchModel,
 	isFilterEmpty,
-	prefetchRequests,
 } from "./layout.shared";
 
-let prevFilteredRequests: Array<Request> | null = null;
+const PAGE_SIZE = 3;
+
+let prevFilteredRequests: Array<HelpRequest> | null = null;
 let abort: AbortController | null;
 export const { loader, useLoaderData } = defineLoader(
 	async ({ request, queryClient }) => {
 		let requests = await prefetchRequests(queryClient);
 		const { searchParams } = new URL(request.url);
-		const filter = parseQueryModel(searchParams, FilterModel);
-		const search = parseQueryModel(searchParams, SearchModel);
+		const { page, ...filter } = parseQueryModel(searchParams, {
+			...FilterModel,
+			...SearchModel,
+			...PageModel,
+		});
+
 		const deopt = searchParams.has("deopt");
 
 		if (prevFilteredRequests && !deopt) {
@@ -51,16 +65,19 @@ export const { loader, useLoaderData } = defineLoader(
 			abort = new AbortController();
 		}
 
+		// todo - cache filtered
 		const filteredRequests = await filterRequests(
 			requests,
-			{ ...filter, ...search },
+			filter,
 			abort?.signal,
 		);
 
 		prevFilteredRequests = filteredRequests;
 
+		const offset = (page - 1) * PAGE_SIZE;
 		return {
 			requests: filteredRequests,
+			page: filteredRequests.slice(offset, offset + PAGE_SIZE),
 		};
 	},
 );
@@ -71,15 +88,22 @@ export function Component() {
 
 	return (
 		<Layout requestCount={data.requests.length}>
-			<Outlet context={context} />
+			{data.requests.length > 0 ? (
+				<Outlet context={context} />
+			) : (
+				<NoResultsScreen message="Запросы не найдены" />
+			)}
 		</Layout>
 	);
 }
 
 export function ErrorBoundary() {
+	const { revalidate } = useRevalidator();
 	return (
 		<Layout>
-			<ErrorScreen />
+			<Button onClick={revalidate}>
+				<ErrorScreen />
+			</Button>
 		</Layout>
 	);
 }
@@ -92,8 +116,17 @@ function Layout({
 	children,
 }: PropsWithChildren<LayoutProps>) {
 	const { pathname } = useLocation();
+	const [page, setPage] = useQueryModel(PageModel);
+
 	return (
-		<Paper sx={{ padding: "1rem 3rem", height: "100%" }}>
+		<Paper
+			sx={{
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
+				padding: "1rem 3rem",
+			}}
+		>
 			<Box display="flex" justifyContent="space-between">
 				<Typography>Найдено {requestCount}</Typography>
 				<ToggleButtonGroup value={pathname}>
@@ -109,6 +142,13 @@ function Layout({
 				</ToggleButtonGroup>
 			</Box>
 			<Box height="100%">{children}</Box>
+			{requestCount > 0 ? (
+				<Pagination
+					page={page.page}
+					count={Math.ceil(requestCount / 3)}
+					onChange={(_, page) => setPage({ page })}
+				/>
+			) : null}
 		</Paper>
 	);
 }
@@ -133,15 +173,15 @@ type RequestSearchContext = {
 };
 
 async function filterRequests(
-	requests: Array<Request>,
+	requests: Array<HelpRequest>,
 	filter: FullFilter,
 	signal?: AbortSignal,
-): Promise<Array<Request>> {
+): Promise<Array<HelpRequest>> {
 	if (isFilterEmpty(filter)) {
 		return requests;
 	}
 
-	const filtered: Array<Request> = [];
+	const filtered: Array<HelpRequest> = [];
 
 	let chunkCount = 0;
 	for (const request of requests) {
@@ -193,3 +233,21 @@ async function filterRequests(
 function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {
 	return filter === null || filter === value;
 }
+
+const PageModel = {
+	page: defineQueryModel({
+		transform: {
+			from(param) {
+				const parsed = Number.parseInt(param);
+				if (Number.isNaN(parsed)) {
+					return 1;
+				}
+
+				return parsed;
+			},
+			to(value) {
+				return value.toString();
+			},
+		},
+	}),
+} satisfies QueryModel;

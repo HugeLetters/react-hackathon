@@ -1,27 +1,15 @@
-import { $api } from "@lib/api/client";
+import type { HelpRequest } from "@lib/api/request";
 import {
 	type QueryModel,
 	type QueryModelValue,
 	defineQueryModel,
 } from "@lib/state/query";
-import type { QueryClient } from "@tanstack/react-query";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
-export function prefetchRequests(client: QueryClient) {
-	const requestsOpts = $api.queryOptions(
-		"get",
-		"/api/request",
-		{},
-		{ staleTime: 60_000 },
-	);
-	return $api.prefetchQuery(client, requestsOpts);
-}
-
 export type Nullish<T> = Exclude<T, undefined> | null;
 
-export type Request = Awaited<ReturnType<typeof prefetchRequests>>[number];
-type RequestRequirements = NonNullable<Request["helperRequirements"]>;
+type RequestRequirements = NonNullable<HelpRequest["helperRequirements"]>;
 
 export const ReuseRequestModel = {
 	"~reuseRequest": defineQueryModel<boolean>({
@@ -47,7 +35,7 @@ export const ReuseRequestModel = {
 } satisfies QueryModel;
 
 export const FilterModel = {
-	requester: defineQueryModel<Nullish<Request["requesterType"]>>({
+	requester: defineQueryModel<Nullish<HelpRequest["requesterType"]>>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -64,7 +52,7 @@ export const FilterModel = {
 			},
 		},
 	}),
-	help: defineQueryModel<Nullish<Request["helpType"]>>({
+	help: defineQueryModel<Nullish<HelpRequest["helpType"]>>({
 		transform: {
 			from(param) {
 				switch (param) {

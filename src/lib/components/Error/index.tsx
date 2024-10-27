@@ -20,7 +20,7 @@ export function ErrorScreen({
 					<Container maxWidth="xs">
 						<img src={ErrorImg} alt="" className={style.img} />
 					</Container>
-					<Typography color="error" variant="h5">
+					<Typography color="error" textAlign="center" variant="h5">
 						{message}
 					</Typography>
 				</Box>

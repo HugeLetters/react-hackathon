@@ -1,13 +1,21 @@
 .card {
 	width: 320px;
+	flex-shrink: 1;
 	background: #fff;
 	box-shadow: 0px 3px 1px -2px #00000033;
 	box-shadow: 0px 2px 2px 0px #00000024;
 	box-shadow: 0px 1px 5px 0px #0000001f;
 }
 
+.container {
+	display: flex;
+	flex-direction: column;
+	height: calc(100% - 220px);
+}
+
 .header {
 	display: flex;
+	justify-content: space-between;
 	padding: 16px;
 }
 
@@ -67,6 +75,7 @@
 .action {
 	display: flex;
 	flex-direction: column;
+	margin-top: auto;
 	padding: 0 16px 20px 16px;
 	color: rgba(0, 0, 0, 0.6);
 }

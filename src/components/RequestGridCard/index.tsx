@@ -30,7 +30,7 @@ export function RequestGridCard({ ...props }) {
 					width={220}
 				/>
 			</Box>
-			<Box height="100%">
+			<Box className={style.container}>
 				<Box className={style.header}>
 					<Box>{req?.title}</Box>
 					<FavStarBtn isFavorite={req?.requestGoal % 2 === 0} />
@@ -84,7 +84,10 @@ export function RequestGridCard({ ...props }) {
 					<Typography variant="body2">
 						Нас уже: {req?.contributorsCount.toLocaleString("ru-RU")}
 					</Typography>
-					<Button variant="contained" onClick={() => contributeToRequest(req?.id)}>
+					<Button
+						variant="contained"
+						onClick={() => contributeToRequest(req?.id)}
+					>
 						Помочь
 					</Button>
 				</Box>

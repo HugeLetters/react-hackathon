@@ -93,7 +93,7 @@ function Layout({
 }: PropsWithChildren<LayoutProps>) {
 	const { pathname } = useLocation();
 	return (
-		<Paper sx={{ padding: "1rem 3rem", height: "100%" }}>
+		<Paper sx={{ height: "100%" }}>
 			<Box display="flex" justifyContent="space-between">
 				<Typography>Найдено {requestCount}</Typography>
 				<ToggleButtonGroup value={pathname}>

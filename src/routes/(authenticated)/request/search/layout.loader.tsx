@@ -1,8 +1,24 @@
 import { ErrorScreen } from "@lib/components/Error";
 import { defineLoader } from "@lib/router/loader";
 import { parseQueryModel } from "@lib/state/query";
+import { GridOnRounded, ListAltRounded, LocationOn } from "@mui/icons-material";
+import {
+	Box,
+	Container,
+	Paper,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
+} from "@mui/material";
 import dayjs from "dayjs";
-import { Outlet, useOutletContext } from "react-router-dom";
+import type { PropsWithChildren } from "react";
+import {
+	type LinkProps,
+	NavLink,
+	Outlet,
+	useLocation,
+	useOutletContext,
+} from "react-router-dom";
 import {
 	FilterModel,
 	type FullFilter,
@@ -53,11 +69,60 @@ export const { loader, useLoaderData } = defineLoader(
 export function Component() {
 	const data = useLoaderData();
 	const context: RequestSearchContext = { data };
-	return <Outlet context={context} />;
+
+	return (
+		<Layout requestCount={data.requests.length}>
+			<Outlet context={context} />
+		</Layout>
+	);
 }
 
 export function ErrorBoundary() {
-	return <ErrorScreen />;
+	return (
+		<Layout>
+			<ErrorScreen />
+		</Layout>
+	);
+}
+
+type LayoutProps = {
+	requestCount?: number;
+};
+function Layout({
+	requestCount = 0,
+	children,
+}: PropsWithChildren<LayoutProps>) {
+	const { pathname } = useLocation();
+	return (
+		<Paper sx={{ padding: "1rem 3rem", height: "100%" }}>
+			<Box display="flex" justifyContent="space-between">
+				<Typography>Найдено {requestCount}</Typography>
+				<ToggleButtonGroup value={pathname}>
+					<NavButton aria-label="open grid view" to="/request/search/grid">
+						<GridOnRounded />
+					</NavButton>
+					<NavButton to="/request/search/list" aria-label="open list view">
+						<ListAltRounded />
+					</NavButton>
+					<NavButton to="/request/search/map" aria-label="open map view">
+						<LocationOn />
+					</NavButton>
+				</ToggleButtonGroup>
+			</Box>
+			<Box height="100%">{children}</Box>
+		</Paper>
+	);
+}
+
+function NavButton({
+	children,
+	...props
+}: PropsWithChildren<Pick<LinkProps, "to" | "aria-label">>) {
+	return (
+		<ToggleButton component={NavLink} {...props} to={props.to} value={props.to}>
+			{children}
+		</ToggleButton>
+	);
 }
 
 export function useRequestSearchContext() {

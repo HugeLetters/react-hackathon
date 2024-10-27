@@ -22,6 +22,7 @@ import {
 	Paper,
 	TextField,
 	Typography,
+	type CheckboxProps,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import type { QueryClient } from "@tanstack/react-query";
@@ -93,7 +94,7 @@ function Search() {
 }
 
 function Filters() {
-	const [filter, setFilter] = useQueryModel(FilterModel);
+	const { filter, setValue, createCheckboxHandler, reset } = useFilterModel();
 
 	return (
 		<Box>
@@ -101,23 +102,13 @@ function Filters() {
 				<FormLabel>Комы мы помогаем</FormLabel>
 				<FormControlLabel
 					control={
-						<Checkbox
-							checked={filter.requester === "person"}
-							onChange={() => {
-								setFilter((v) => ({ ...v, requester: "person" }));
-							}}
-						/>
+						<Checkbox {...createCheckboxHandler("requester", "person")} />
 					}
 					label="Пенсионеры"
 				/>
 				<FormControlLabel
 					control={
-						<Checkbox
-							checked={filter.requester === "organization"}
-							onChange={() => {
-								setFilter((v) => ({ ...v, requester: "organization" }));
-							}}
-						/>
+						<Checkbox {...createCheckboxHandler("requester", "organization")} />
 					}
 					label="Дома престарелых"
 				/>
@@ -125,25 +116,11 @@ function Filters() {
 			<FormGroup>
 				<FormLabel>Чем мы помогаем</FormLabel>
 				<FormControlLabel
-					control={
-						<Checkbox
-							checked={filter.help === "material"}
-							onChange={() => {
-								setFilter((v) => ({ ...v, help: "material" }));
-							}}
-						/>
-					}
+					control={<Checkbox {...createCheckboxHandler("help", "material")} />}
 					label="Вещи"
 				/>
 				<FormControlLabel
-					control={
-						<Checkbox
-							checked={filter.help === "finance"}
-							onChange={() => {
-								setFilter((v) => ({ ...v, help: "finance" }));
-							}}
-						/>
-					}
+					control={<Checkbox {...createCheckboxHandler("help", "finance")} />}
 					label="Финансирование"
 				/>
 			</FormGroup>
@@ -155,30 +132,17 @@ function Filters() {
 				views={["year", "month", "day"]}
 				value={filter.until}
 				onChange={(value) => {
-					setFilter((v) => ({ ...v, until: value }));
+					setValue("until", value);
 				}}
 			/>
 
-			<Button
-				onClick={() => {
-					setFilter({
-						help: undefined,
-						requester: undefined,
-						helper: undefined,
-						isOnline: undefined,
-						qualification: undefined,
-						until: null,
-					});
-				}}
-			>
-				Сбросить
-			</Button>
+			<Button onClick={reset}>Сбросить</Button>
 		</Box>
 	);
 }
 
 function RequirementFilters() {
-	const [filter, setFilter] = useQueryModel(FilterModel);
+	const { createCheckboxHandler } = useFilterModel();
 	return (
 		<Accordion>
 			<AccordionSummary>Волонтерство</AccordionSummary>
@@ -188,25 +152,14 @@ function RequirementFilters() {
 					<FormControlLabel
 						control={
 							<Checkbox
-								checked={filter.qualification === "professional"}
-								onChange={() => {
-									setFilter((v) => ({
-										...v,
-										qualification: "professional",
-									}));
-								}}
+								{...createCheckboxHandler("qualification", "professional")}
 							/>
 						}
 						label="Квалифицированная"
 					/>
 					<FormControlLabel
 						control={
-							<Checkbox
-								checked={filter.qualification === "common"}
-								onChange={() => {
-									setFilter((v) => ({ ...v, qualification: "common" }));
-								}}
-							/>
+							<Checkbox {...createCheckboxHandler("qualification", "common")} />
 						}
 						label="Не требует профессии"
 					/>
@@ -214,49 +167,23 @@ function RequirementFilters() {
 				<FormGroup>
 					<FormLabel>Формат</FormLabel>
 					<FormControlLabel
-						control={
-							<Checkbox
-								checked={filter.isOnline === true}
-								onChange={() => {
-									setFilter((v) => ({ ...v, isOnline: true }));
-								}}
-							/>
-						}
+						control={<Checkbox {...createCheckboxHandler("isOnline", true)} />}
 						label="Онлайн"
 					/>
 					<FormControlLabel
-						control={
-							<Checkbox
-								checked={filter.isOnline === false}
-								onChange={() => {
-									setFilter((v) => ({ ...v, isOnline: false }));
-								}}
-							/>
-						}
+						control={<Checkbox {...createCheckboxHandler("isOnline", false)} />}
 						label="Офлайн"
 					/>
 				</FormGroup>
 				<FormGroup>
 					<FormLabel>Необходимо волонтеров</FormLabel>
 					<FormControlLabel
-						control={
-							<Checkbox
-								checked={filter.helper === "group"}
-								onChange={() => {
-									setFilter((v) => ({ ...v, helper: "group" }));
-								}}
-							/>
-						}
+						control={<Checkbox {...createCheckboxHandler("helper", "group")} />}
 						label="Группа"
 					/>
 					<FormControlLabel
 						control={
-							<Checkbox
-								checked={filter.helper === "single"}
-								onChange={() => {
-									setFilter((v) => ({ ...v, helper: "single" }));
-								}}
-							/>
+							<Checkbox {...createCheckboxHandler("helper", "single")} />
 						}
 						label="Один"
 					/>
@@ -283,7 +210,7 @@ type RequestSearchContext = {
 };
 
 const FilterModel = {
-	requester: defineQueryModel<Request["requesterType"] | null>({
+	requester: defineQueryModel<Nullish<Request["requesterType"]>>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -300,7 +227,7 @@ const FilterModel = {
 			},
 		},
 	}),
-	help: defineQueryModel<Request["helpType"] | null>({
+	help: defineQueryModel<Nullish<Request["helpType"]>>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -317,7 +244,7 @@ const FilterModel = {
 			},
 		},
 	}),
-	until: defineQueryModel<Dayjs | null>({
+	until: defineQueryModel<Nullish<Dayjs>>({
 		transform: {
 			from(param) {
 				if (!param) {
@@ -337,7 +264,7 @@ const FilterModel = {
 			},
 		},
 	}),
-	helper: defineQueryModel<RequestRequirements["helperType"] | null>({
+	helper: defineQueryModel<Nullish<RequestRequirements["helperType"]>>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -354,7 +281,7 @@ const FilterModel = {
 			},
 		},
 	}),
-	isOnline: defineQueryModel<RequestRequirements["isOnline"] | null>({
+	isOnline: defineQueryModel<Nullish<RequestRequirements["isOnline"]>>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -378,7 +305,9 @@ const FilterModel = {
 			},
 		},
 	}),
-	qualification: defineQueryModel<RequestRequirements["qualification"] | null>({
+	qualification: defineQueryModel<
+		Nullish<RequestRequirements["qualification"]>
+	>({
 		transform: {
 			from(param) {
 				switch (param) {
@@ -399,12 +328,54 @@ const FilterModel = {
 
 type Request = Awaited<ReturnType<typeof prefetchRequests>>[number];
 type RequestRequirements = NonNullable<Request["helperRequirements"]>;
+type Nullish<T> = Exclude<T, undefined> | null;
 
 function prefetchRequests(client: QueryClient) {
-	const requestsOpts = $api.queryOptions("get", "/api/request");
+	const requestsOpts = $api.queryOptions(
+		"get",
+		"/api/request",
+		{},
+		{ staleTime: 60_000 },
+	);
 	return $api.prefetchQuery(client, requestsOpts);
 }
 
 function filterRequests(requests: Array<Request>): Array<Request> {
 	return requests;
+
+function useFilterModel() {
+	const [filter, setFilter] = useQueryModel(FilterModel);
+
+	function setValue<K extends keyof typeof filter>(
+		key: K,
+		value: (typeof filter)[K],
+	) {
+		setFilter((filter) => ({ ...filter, [key]: value }));
+	}
+
+	return {
+		filter,
+		reset() {
+			setFilter({
+				help: null,
+				requester: null,
+				helper: null,
+				isOnline: null,
+				qualification: null,
+				until: null,
+			});
+		},
+		setValue,
+		createCheckboxHandler<K extends keyof typeof filter>(
+			key: K,
+			value: (typeof filter)[K],
+		): CheckboxProps {
+			return {
+				checked: filter[key] === value,
+				onChange(e) {
+					setValue(key, e.currentTarget.checked ? value : null);
+				},
+			};
+		},
+	};
 }

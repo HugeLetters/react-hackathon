@@ -18,7 +18,7 @@ export function useContributeToRequest() {
 		},
 	);
 	const contributeToRequest = (id: string) => {
-		mutate({ params: { path: { id: id } } });
+		mutate({ params: { path: { id: id } }, parseAs: "text" });
 	};
 	return { contributeToRequest } as const;
 }

@@ -16,6 +16,9 @@ import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { createRouter } from "./router";
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
 const root = document.getElementById("root");
 
 if (!root) {
@@ -45,11 +48,13 @@ function App() {
 
 	return (
 		<StyledEngineProvider injectFirst>
-			<CssBaseline />
-			<ToastContainer stacked theme="colored" />
-			<QueryClientProvider client={queryClient}>
-				<RouterProvider router={router} />
-			</QueryClientProvider>
+			<LocalizationProvider dateAdapter={AdapterDayjs}>
+				<CssBaseline />
+				<ToastContainer stacked theme="colored" />
+				<QueryClientProvider client={queryClient}>
+					<RouterProvider router={router} />
+				</QueryClientProvider>
+			</LocalizationProvider>
 		</StyledEngineProvider>
 	);
 }

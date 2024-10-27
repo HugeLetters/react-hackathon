@@ -7,7 +7,7 @@ export function Component() {
 	return (
 		<Stack height="100dvh">
 			<Header />
-			<Container component="main" sx={{ height: "100%" }}>
+			<Container component="main" maxWidth="xl" sx={{ height: "100%" }}>
 				<Outlet />
 			</Container>
 			<Footer />

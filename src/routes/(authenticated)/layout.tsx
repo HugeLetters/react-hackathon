@@ -8,7 +8,21 @@ export const { loader } = defineLoader(async ({ queryClient }) => {
 		throw redirect("/auth/signin");
 	}
 
-	const userOpts = $api.queryOptions("get", "/api/user", {}, { retry: 3 });
+	const userOpts = $api.queryOptions(
+		"get",
+		"/api/user",
+		{},
+		{
+			retry(count, error_) {
+				const error = error_ as { message: string } | undefined;
+				if (error?.message === "No token provided.") {
+					return false;
+				}
+
+				return count <= 3;
+			},
+		},
+	);
 	await $api.prefetchQuery(queryClient, userOpts).catch(() => {
 		throw redirect("/auth/signin");
 	});

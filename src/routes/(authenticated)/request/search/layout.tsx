@@ -41,7 +41,7 @@ export const { loader, useLoaderData } = defineLoader(
 		const filter = parseQueryModel(searchParams, FilterModel);
 		const search = parseQueryModel(searchParams, SearchModel);
 
-		if (prevFilteredRequests) {
+		if (prevFilteredRequests && !searchParams.has("no-reuse")) {
 			const reuse = parseQueryModel(searchParams, ReuseRequestModel);
 			if (reuse["~reuseRequest"]) {
 				requests = prevFilteredRequests;

@@ -95,28 +95,40 @@ export function createRouter(ctx: RouterContext) {
 								{
 									path: "search",
 									lazy: () =>
-										import(
-											"@routes/(authenticated)/request/search/layout"
-										).then(augmentRouterDataLoader(ctx)),
+										import("@routes/(authenticated)/request/search/layout"),
 									children: [
 										{
-											index: true,
-											element: <Navigate to="/request/search/list" />,
-										},
-										{
-											path: "list",
 											lazy: () =>
-												import("@routes/(authenticated)/request/search/list"),
-										},
-										{
-											path: "grid",
-											lazy: () =>
-												import("@routes/(authenticated)/request/search/grid"),
-										},
-										{
-											path: "map",
-											lazy: () =>
-												import("@routes/(authenticated)/request/search/map"),
+												import(
+													"@routes/(authenticated)/request/search/layout.loader"
+												).then(augmentRouterDataLoader(ctx)),
+											children: [
+												{
+													index: true,
+													element: <Navigate to="/request/search/list" />,
+												},
+												{
+													path: "list",
+													lazy: () =>
+														import(
+															"@routes/(authenticated)/request/search/list"
+														),
+												},
+												{
+													path: "grid",
+													lazy: () =>
+														import(
+															"@routes/(authenticated)/request/search/grid"
+														),
+												},
+												{
+													path: "map",
+													lazy: () =>
+														import(
+															"@routes/(authenticated)/request/search/map"
+														),
+												},
+											],
 										},
 									],
 								},

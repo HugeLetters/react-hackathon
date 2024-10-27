@@ -9,7 +9,7 @@ import {
 	Typography,
 	styled,
 } from "@mui/material";
-import { useRequestSearchContext } from "./layout";
+import { useRequestSearchContext } from "./layout.loader";
 
 const LocalSlider = styled(Slider)({
 	padding: "4px 0",

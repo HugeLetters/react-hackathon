@@ -142,13 +142,15 @@ function Layout({
 				</ToggleButtonGroup>
 			</Box>
 			<Box height="100%">{children}</Box>
-			{requestCount > 0 ? (
-				<Pagination
-					page={page.page}
-					count={Math.ceil(requestCount / 3)}
-					onChange={(_, page) => setPage({ page })}
-				/>
-			) : null}
+			<Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+				{requestCount > 0 ? (
+					<Pagination
+						page={page.page}
+						count={Math.ceil(requestCount / 3)}
+						onChange={(_, page) => setPage({ page })}
+					/>
+				) : null}
+			</Box>
 		</Paper>
 	);
 }

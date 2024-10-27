@@ -18,16 +18,8 @@ export function RequestGridCard({ request }: RequestGridCardProps) {
 	const { contributeToRequest } = useContributeToRequest();
 
 	return (
-		<Paper
-			className={style.card}
-			// sx={{ height: "100%" }}
-			variant="outlined"
-		>
-			<Box
-				display="flex"
-				//  sx={{ height: "100%" }}
-				justifyContent="center"
-			>
+		<Paper className={style.card} variant="outlined">
+			<Box display="flex" justifyContent="center">
 				<Box
 					component="img"
 					src={

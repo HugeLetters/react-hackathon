@@ -34,7 +34,7 @@ export function Component() {
 					<Typography variant="h4">Запросы о помощи</Typography>
 					<Filters />
 				</Grid2>
-				<Grid2 size={9} height="100%">
+				<Grid2 size={9} display="flex" flexDirection="column" height="100%">
 					<Search />
 					<Box height="100%">
 						<Outlet />

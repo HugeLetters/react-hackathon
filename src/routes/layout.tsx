@@ -16,7 +16,7 @@ export function Component() {
 					height: "100%",
 				}}
 			>
-				<Container maxWidth="xl">
+				<Container maxWidth="xl" sx={{ height: "100%" }}>
 					<Outlet />
 				</Container>
 			</Paper>

@@ -40,8 +40,9 @@ let prevFilteredRequests: Array<HelpRequest> | null = null;
 let abort: AbortController | null;
 export const { loader, useLoaderData } = defineLoader(
 	async ({ request, queryClient }) => {
-		let requests = await prefetchRequests(queryClient);
 		const { searchParams } = new URL(request.url);
+		const multiplier = getMultiplier(searchParams) ?? undefined;
+		let requests = await prefetchRequests(queryClient, multiplier);
 		const { page, ...filter } = parseQueryModel(searchParams, {
 			...FilterModel,
 			...SearchModel,
@@ -232,4 +233,18 @@ async function filterRequests(
 
 function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {
 	return filter === null || filter === value;
+}
+
+function getMultiplier(params: URLSearchParams) {
+	const multiply = params.get("mult");
+	if (!multiply) {
+		return null;
+	}
+
+	const numeric = Number.parseInt(multiply);
+	if (Number.isNaN(numeric)) {
+		return null;
+	}
+
+	return numeric;
 }

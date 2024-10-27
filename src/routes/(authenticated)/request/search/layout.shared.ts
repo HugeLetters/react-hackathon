@@ -13,7 +13,7 @@ export function prefetchRequests(client: QueryClient) {
 		"get",
 		"/api/request",
 		{},
-		{ staleTime: 0 },
+		{ staleTime: 60_000 },
 	);
 	return $api.prefetchQuery(client, requestsOpts);
 }

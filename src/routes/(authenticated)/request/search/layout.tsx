@@ -31,24 +31,34 @@ import dayjs, { type Dayjs } from "dayjs";
 import type { PropsWithChildren } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 
-// todo - cache filter
-
 let prevFilteredRequests: Array<Request> | null = null;
+let abort: AbortController | null;
 export const { loader, useLoaderData } = defineLoader(
 	async ({ request, queryClient }) => {
 		let requests = await prefetchRequests(queryClient);
 		const { searchParams } = new URL(request.url);
 		const filter = parseQueryModel(searchParams, FilterModel);
 		const search = parseQueryModel(searchParams, SearchModel);
+		const deopt = searchParams.has("deopt");
 
-		if (prevFilteredRequests && !searchParams.has("no-reuse")) {
+		if (prevFilteredRequests && !deopt) {
 			const reuse = parseQueryModel(searchParams, ReuseRequestModel);
 			if (reuse["~reuseRequest"]) {
 				requests = prevFilteredRequests;
 			}
 		}
 
-		const filteredRequests = filterRequests(requests, { ...filter, ...search });
+		if (!deopt) {
+			abort?.abort();
+			abort = new AbortController();
+		}
+
+		const filteredRequests = await filterRequests(
+			requests,
+			{ ...filter, ...search },
+			abort?.signal,
+		);
+
 		prevFilteredRequests = filteredRequests;
 
 		return {
@@ -418,17 +428,31 @@ function prefetchRequests(client: QueryClient) {
 	return $api.prefetchQuery(client, requestsOpts);
 }
 
-// todo - use async API to unblock UI
-// todo - abortable?
-function filterRequests(
+async function filterRequests(
 	requests: Array<Request>,
 	filter: FullFilter,
-): Array<Request> {
+	signal?: AbortSignal,
+): Promise<Array<Request>> {
 	if (isFilterEmpty(filter)) {
 		return requests;
 	}
 
-	return requests.filter((request) => {
+	const filtered: Array<Request> = [];
+
+	let chunkCount = 0;
+	for (const request of requests) {
+		chunkCount++;
+		if (signal && chunkCount > 300) {
+			chunkCount = 0;
+			await new Promise<void>((r) => {
+				setTimeout(r);
+			});
+
+			if (signal.aborted) {
+				throw new Error("aborted");
+			}
+		}
+
 		const { helperRequirements } = request;
 		if (
 			!isEqualsFilter(filter.help, request.helpType) ||
@@ -437,14 +461,14 @@ function filterRequests(
 			!isEqualsFilter(filter.isOnline, helperRequirements?.isOnline) ||
 			!isEqualsFilter(filter.qualification, helperRequirements?.qualification)
 		) {
-			return false;
+			continue;
 		}
 
 		if (
 			filter.until !== null &&
 			dayjs(request.endingDate, "YYYY-MM-DD").unix() > filter.until.unix()
 		) {
-			return false;
+			continue;
 		}
 
 		if (filter.q !== null) {
@@ -452,12 +476,14 @@ function filterRequests(
 				!request.title?.toLowerCase().includes(filter.q) ||
 				!request.organization?.title?.toLowerCase().includes(filter.q)
 			) {
-				return false;
+				continue;
 			}
 		}
 
-		return true;
-	});
+		filtered.push(request);
+	}
+
+	return filtered;
 }
 
 function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {

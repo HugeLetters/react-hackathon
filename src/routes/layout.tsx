@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 export function Component() {
 	return (
-		<Stack height="100dvh">
+		<Stack height="calc(100dvh + 236px)">
 			<Header />
 			<Paper
 				variant="outlined"

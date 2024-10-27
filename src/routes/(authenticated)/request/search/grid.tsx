@@ -1,17 +1,23 @@
 import { RequestGridCard } from "@components/RequestGridCard";
-import { Grid2 } from "@mui/material";
+import { Box } from "@mui/material";
 import { useRequestSearchContext } from "./layout.loader";
 
 export function Component() {
 	const ctx = useRequestSearchContext();
 
 	return (
-		<Grid2 container>
+		<Box
+			sx={{
+				display: "flex",
+				justifyContent: "space-between",
+				gap: "24px",
+				padding: "20px 0px",
+				overflowY: "scroll",
+			}}
+		>
 			{ctx.data.page.map((request) => (
-				<Grid2 key={request.id} size={4} height="100%">
-					<RequestGridCard request={request} />
-				</Grid2>
+				<RequestGridCard request={request} key={request.id} />
 			))}
-		</Grid2>
+		</Box>
 	);
 }

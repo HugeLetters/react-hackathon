@@ -7,19 +7,19 @@ import { FavStarBtn } from "./FavStarBtn";
 
 import type { HelpRequest } from "@lib/api/request";
 import dayjs from "dayjs";
+import { useContributeToRequest } from "./api";
 import style from "./RequestGridCard.module.css";
 
 type RequestGridCardProps = {
 	request: HelpRequest;
 };
+
 export function RequestGridCard({ request }: RequestGridCardProps) {
-	const helpHandler = (id?: string) => {
-		console.log("help action", id);
-	};
+	const { contributeToRequest } = useContributeToRequest();
 
 	return (
-		<Paper className={style.card} sx={{ height: "100%" }} variant="outlined">
-			<Box display="flex" sx={{ height: "100%" }} justifyContent="center">
+		<Paper className={style.card} variant="outlined">
+			<Box display="flex" justifyContent="center">
 				<Box
 					component="img"
 					src={
@@ -34,12 +34,11 @@ export function RequestGridCard({ request }: RequestGridCardProps) {
 					width={220}
 				/>
 			</Box>
-			<Box height="100%">
+			<Box className={style.container}>
 				<Box className={style.header}>
 					<Box>{request.title}</Box>
 					<FavStarBtn isFavorite={(request.requestGoal ?? 0) % 2 === 0} />
 				</Box>
-
 				<Box className={style.cardContent}>
 					<Box className={style.cardInfo}>
 						<Typography className={style.infoLabel}>Организация</Typography>
@@ -92,7 +91,10 @@ export function RequestGridCard({ request }: RequestGridCardProps) {
 					<Typography variant="body2">
 						Нас уже: {request.contributorsCount?.toLocaleString("ru-RU")}
 					</Typography>
-					<Button variant="contained" onClick={() => helpHandler(request.id)}>
+					<Button
+						variant="contained"
+						onClick={() => contributeToRequest(request?.id ?? "")}
+					>
 						Помочь
 					</Button>
 				</Box>

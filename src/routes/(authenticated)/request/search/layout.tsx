@@ -37,7 +37,7 @@ export function Component() {
 				</Grid2>
 				<Grid2 size={9} height="100%" maxWidth="1080px" width="100%">
 					<Search />
-					<Box height="100%">
+					<Box>
 						<Outlet />
 					</Box>
 				</Grid2>

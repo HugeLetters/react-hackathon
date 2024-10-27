@@ -5,9 +5,9 @@ export function Component() {
 	const ctx = useRequestSearchContext();
 	console.log(ctx.data);
 
-	console.log("requests", ctx.data);
+	console.log("requests", ctx.data.requests);
 
-	const data = ctx.data[1];
+	const data = ctx.data.requests[1];
 
 	return <RequestGridCard data={data} />;
 }

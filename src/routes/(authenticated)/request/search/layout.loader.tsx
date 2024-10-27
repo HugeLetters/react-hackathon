@@ -71,7 +71,7 @@ export const { loader, useLoaderData } = defineLoader(
 			.join("|");
 
 		const filteredRequests =
-			prevFilteredRequests && prevFilter === filterString
+			!deopt && prevFilteredRequests && prevFilter === filterString
 				? prevFilteredRequests
 				: await filterRequests(requests, filter, abort?.signal);
 		prevFilter = filterString;

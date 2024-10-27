@@ -3,7 +3,9 @@ import { ErrorScreen } from "@lib/components/Error";
 import { defineLoader } from "@lib/router/loader";
 import {
 	type QueryModel,
+	type QueryModelValue,
 	defineQueryModel,
+	parseQueryModel,
 	useQueryModel,
 	useQueryState,
 } from "@lib/state/query";
@@ -31,15 +33,26 @@ import type { PropsWithChildren } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 
 export const { loader, useLoaderData } = defineLoader(
-	async ({ queryClient }) => {
+	async ({ request, queryClient }) => {
 		const requests = await prefetchRequests(queryClient);
-		return { requests: filterRequests(requests) };
+		const { searchParams } = new URL(request.url);
+		const filter = parseQueryModel(searchParams, FilterModel);
+		const filteredRequests = filterRequests(requests, {
+			...filter,
+			search: searchParams.get("q"),
+		});
+
+		return {
+			requests: filteredRequests,
+		};
 	},
 );
 
 export function Component() {
 	const data = useLoaderData();
 	const context: RequestSearchContext = { data };
+
+	console.log(data.requests);
 
 	return (
 		<Layout>
@@ -67,7 +80,12 @@ function Layout({ children }: PropsWithChildren) {
 
 function Search() {
 	const [search, setSearch] = useQueryState("q", {
-		transform: { from: String, to: String },
+		transform: {
+			from: String,
+			to(str) {
+				return str.toLowerCase();
+			},
+		},
 	});
 	return (
 		<Paper
@@ -127,16 +145,24 @@ function Filters() {
 
 			<RequirementFilters />
 
-			<DatePicker
-				disablePast
-				views={["year", "month", "day"]}
-				value={filter.until}
-				onChange={(value) => {
-					setValue("until", value);
-				}}
+			<FormControlLabel
+				control={
+					<DatePicker
+						disablePast
+						views={["year", "month", "day"]}
+						value={filter.until}
+						onChange={(value) => {
+							setValue("until", value);
+						}}
+					/>
+				}
+				label="Помощь актуальна до:"
+				labelPlacement="top"
 			/>
 
-			<Button onClick={reset}>Сбросить</Button>
+			<Button disabled={isFilterEmpty(filter)} onClick={reset}>
+				Сбросить
+			</Button>
 		</Box>
 	);
 }
@@ -340,8 +366,57 @@ function prefetchRequests(client: QueryClient) {
 	return $api.prefetchQuery(client, requestsOpts);
 }
 
-function filterRequests(requests: Array<Request>): Array<Request> {
-	return requests;
+interface Filter extends QueryModelValue<typeof FilterModel> {
+	search: Nullish<string>;
+}
+
+function filterRequests(
+	requests: Array<Request>,
+	filter: Filter,
+): Array<Request> {
+	if (isFilterEmpty(filter)) {
+		return requests;
+	}
+
+	return requests.filter((request) => {
+		const { helperRequirements } = request;
+		if (
+			!isEqualsFilter(filter.help, request.helpType) ||
+			!isEqualsFilter(filter.requester, request.requesterType) ||
+			!isEqualsFilter(filter.helper, helperRequirements?.helperType) ||
+			!isEqualsFilter(filter.isOnline, helperRequirements?.isOnline) ||
+			!isEqualsFilter(filter.qualification, helperRequirements?.qualification)
+		) {
+			return false;
+		}
+
+		if (
+			filter.until !== null &&
+			dayjs(request.endingDate, "YYYY-MM-DD").unix() > filter.until.unix()
+		) {
+			return false;
+		}
+
+		if (filter.search !== null) {
+			if (
+				!request.title?.toLowerCase().includes(filter.search) ||
+				!request.organization?.title?.toLowerCase().includes(filter.search)
+			) {
+				return false;
+			}
+		}
+
+		return true;
+	});
+}
+
+function isEqualsFilter<T>(filter: Nullish<T>, value: NoInfer<T>): boolean {
+	return filter === null || filter === value;
+}
+
+function isFilterEmpty(filter: QueryModelValue<typeof FilterModel> | Filter) {
+	return Object.values(filter).every((value) => value === null);
+}
 
 function useFilterModel() {
 	const [filter, setFilter] = useQueryModel(FilterModel);

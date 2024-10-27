@@ -41,18 +41,13 @@ export function useQueryState<T = string>(
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type QueryModel = Record<string, QueryStateOptions<any>>;
-type QueryModelValue<M extends QueryModel> = {
+export type QueryModelValue<M extends QueryModel> = {
 	[K in keyof M]: M[K] extends QueryStateOptions<infer T> ? T : never;
 };
 
 export function useQueryModel<M extends QueryModel>(model: M) {
 	const [params, setSearchParams] = useSearchParams();
-	const value = Object.fromEntries(
-		Object.entries(model).map(([key, model]) => {
-			const param = params.get(key) ?? "";
-			return [key, model.transform.from(param)];
-		}),
-	) as QueryModelValue<M>;
+	const value = parseQueryModel(params, model);
 
 	function setValue(
 		updater:
@@ -94,4 +89,17 @@ export function useQueryModel<M extends QueryModel>(model: M) {
 
 export function defineQueryModel<T>(ops: QueryStateOptions<T>) {
 	return ops;
+}
+
+export function parseQueryModel<M extends QueryModel>(
+	params: URLSearchParams,
+	model: M,
+) {
+	const modelEntries = Object.entries(model);
+	const parsedEntries = modelEntries.map(([key, model]) => {
+		const param = params.get(key) ?? "";
+		return [key, model.transform.from(param)] as const;
+	});
+
+	return Object.fromEntries(parsedEntries) as QueryModelValue<M>;
 }

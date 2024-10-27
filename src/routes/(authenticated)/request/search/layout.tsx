@@ -28,13 +28,13 @@ import {
 
 export function Component() {
 	return (
-		<Box height="100%" paddingBlock="1rem">
+		<Box height="100%" maxWidth='1500px' sx={{padding:"0", boxSizing:"border-box" }}>
+			<Typography variant="h4" sx={{marginBottom:"20px"}}>Запросы о помощи</Typography>
 			<Grid2 container size={12} height="100%">
 				<Grid2 size={3}>
-					<Typography variant="h4">Запросы о помощи</Typography>
 					<Filters />
 				</Grid2>
-				<Grid2 size={9} height="100%">
+				<Grid2 size={9} height="100%" maxWidth="1080px" width="100%">
 					<Search />
 					<Box height="100%">
 						<Outlet />
@@ -58,6 +58,7 @@ function Search() {
 				flexDirection: "column",
 				gap: "1rem",
 				padding: "2rem",
+				marginBottom:"20px"
 			}}
 		>
 			<Typography variant="h6">Найти запрос</Typography>
@@ -88,16 +89,17 @@ function Filters() {
 	const { filter, setValue, createCheckboxHandler, reset } = useFilterModel();
 
 	return (
-		<Box>
+		<Paper sx={{padding:'20px', maxWidth:'320px', width:'100%', marginRight:"20px"}}>
+			<Typography variant='h6' sx={{marginBottom:'25px'}}>Фильтрация</Typography>
 			<FormGroup>
-				<FormLabel>Комы мы помогаем</FormLabel>
-				<FormControlLabel
+				<FormLabel>Кому мы помогаем</FormLabel>
+				<FormControlLabel  sx={{paddingLeft:'12px'}}
 					control={
 						<Checkbox {...createCheckboxHandler("requester", "person")} />
 					}
 					label="Пенсионеры"
 				/>
-				<FormControlLabel
+				<FormControlLabel  sx={{paddingLeft:'12px'}}
 					control={
 						<Checkbox {...createCheckboxHandler("requester", "organization")} />
 					}
@@ -106,11 +108,11 @@ function Filters() {
 			</FormGroup>
 			<FormGroup>
 				<FormLabel>Чем мы помогаем</FormLabel>
-				<FormControlLabel
+				<FormControlLabel  sx={{paddingLeft:'12px'}}
 					control={<Checkbox {...createCheckboxHandler("help", "material")} />}
 					label="Вещи"
 				/>
-				<FormControlLabel
+				<FormControlLabel  sx={{paddingLeft:'12px'}}
 					control={<Checkbox {...createCheckboxHandler("help", "finance")} />}
 					label="Финансирование"
 				/>
@@ -118,9 +120,10 @@ function Filters() {
 
 			<RequirementFilters />
 
-			<FormControlLabel
+			<FormControlLabel sx={{width:'100%', margin:"0", alignItems:"flex-start", marginTop:"20px"}}
 				control={
 					<DatePicker
+						sx={{width:"100%"}}
 						disablePast
 						views={["year", "month", "day"]}
 						value={filter.until}
@@ -133,22 +136,23 @@ function Filters() {
 				labelPlacement="top"
 			/>
 
-			<Button disabled={isFilterEmpty(filter)} onClick={reset}>
+			<Button disabled={isFilterEmpty(filter)} onClick={reset} variant="outlined" size="large" sx={{width:'100%', marginTop:"40px"}} color="text">
 				Сбросить
 			</Button>
-		</Box>
+		</Paper>
 	);
 }
 
 function RequirementFilters() {
 	const { createCheckboxHandler } = useFilterModel();
 	return (
-		<Accordion>
-			<AccordionSummary>Волонтерство</AccordionSummary>
-			<AccordionDetails>
+		<Accordion >
+			<AccordionSummary  sx={{paddingLeft:'42px'}}>Волонтерство</AccordionSummary>
+			<Paper sx={{backgroundColor: "#F5F5F5", border:'none'}}>
+			<AccordionDetails sx={{paddingLeft:'42px'}}>
 				<FormGroup>
 					<FormLabel>Специализация</FormLabel>
-					<FormControlLabel
+					<FormControlLabel sx={{paddingLeft:'10px'}}
 						control={
 							<Checkbox
 								{...createCheckboxHandler("qualification", "professional")}
@@ -156,7 +160,7 @@ function RequirementFilters() {
 						}
 						label="Квалифицированная"
 					/>
-					<FormControlLabel
+					<FormControlLabel  sx={{paddingLeft:'10px'}}
 						control={
 							<Checkbox {...createCheckboxHandler("qualification", "common")} />
 						}
@@ -165,22 +169,22 @@ function RequirementFilters() {
 				</FormGroup>
 				<FormGroup>
 					<FormLabel>Формат</FormLabel>
-					<FormControlLabel
+					<FormControlLabel  sx={{paddingLeft:'10px'}}
 						control={<Checkbox {...createCheckboxHandler("isOnline", true)} />}
 						label="Онлайн"
 					/>
-					<FormControlLabel
+					<FormControlLabel  sx={{paddingLeft:'10px'}}
 						control={<Checkbox {...createCheckboxHandler("isOnline", false)} />}
 						label="Офлайн"
 					/>
 				</FormGroup>
 				<FormGroup>
 					<FormLabel>Необходимо волонтеров</FormLabel>
-					<FormControlLabel
+					<FormControlLabel  sx={{paddingLeft:'10px'}}
 						control={<Checkbox {...createCheckboxHandler("helper", "group")} />}
 						label="Группа"
 					/>
-					<FormControlLabel
+					<FormControlLabel  sx={{paddingLeft:'10px'}}
 						control={
 							<Checkbox {...createCheckboxHandler("helper", "single")} />
 						}
@@ -188,6 +192,7 @@ function RequirementFilters() {
 					/>
 				</FormGroup>
 			</AccordionDetails>
+			</Paper>
 		</Accordion>
 	);
 }

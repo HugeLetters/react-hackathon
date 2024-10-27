@@ -39,6 +39,7 @@ import {
 
 const PAGE_SIZE = 3;
 
+let prevFilter: string | null;
 let prevFilteredRequests: Array<HelpRequest> | null = null;
 let abort: AbortController | null;
 export const { loader, useLoaderData } = defineLoader(
@@ -65,12 +66,15 @@ export const { loader, useLoaderData } = defineLoader(
 			abort = new AbortController();
 		}
 
-		// todo - cache filtered
-		const filteredRequests = await filterRequests(
-			requests,
-			filter,
-			abort?.signal,
-		);
+		const filterString = Object.entries(filter)
+			.sort(([a], [b]) => (a > b ? 1 : -1))
+			.join("|");
+
+		const filteredRequests =
+			prevFilteredRequests && prevFilter === filterString
+				? prevFilteredRequests
+				: await filterRequests(requests, filter, abort?.signal);
+		prevFilter = filterString;
 
 		prevFilteredRequests = filteredRequests;
 

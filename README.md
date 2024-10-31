@@ -4,9 +4,8 @@
 
 ### Участники
 
-[Ксения](https://github.com/ksy336),
-[Александра](https://github.com/alexandraberd),
-[Максим](https://github.com/Kvaserq) и
+[Иван](https://github.com/lookWhatIvanDid)
+и
 [Анна](https://github.com/AnnaApk)
 
 ### Капитан
